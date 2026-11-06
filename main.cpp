@@ -3,67 +3,70 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <algorithm> // for std::swap
 
-class Matrix{
+class Matrix {
 private:
     int N;
     int** data;
 
 public:
-    //constructor
-    Matrix(int size){
-    N = size;
-    data = new int*[N];
-    for(int i = 0; i<N; i++){
-        data[i] = new int[N];
-    }
-    }
-
-    ~Matrix(){
-    for(int i =0; i < N; i++){
-        delete[] data[i];
-    }
-    delete[] data; //
+    // Constructor
+    Matrix(int size) {
+        N = size;
+        data = new int*[N];
+        for(int i = 0; i < N; i++){
+            data[i] = new int[N];
+        }
     }
 
+    // Destructor
+    ~Matrix() {
+        for(int i = 0; i < N; i++){
+            delete[] data[i];
+        }
+        delete[] data;
+    }
+
+    // Copy Constructor
     Matrix(const Matrix& other) {
         N = other.N;
         data = new int*[N];
-        for (int i = 0; i < N; i ++){
-            data[i] = new int*[N];
+        for (int i = 0; i < N; i++) {
+            data[i] = new int[N]; // Fixed: allocated int instead of int*
             for (int j = 0; j < N; j++){
                 data[i][j] = other.data[i][j];
             }
         }
-
     }
+
+    // Copy Assignment Operator
     Matrix& operator=(const Matrix& other) {
-    if (this == &other) {
-        return *this; // Self-assignment check
-    }
-
-    // 1. Clean up old memory
-    for (int i = 0; i < N; i++) {
-        delete[] data[i];
-    }
-    delete[] data;
-
-    // 2. Allocate and copy new memory
-    N = other.N;
-    data = new int*[N];
-    for (int i = 0; i < N; i++) {
-        data[i] = new int[N];
-        for (int j = 0; j < N; j++) {
-            data[i][j] = other.data[i][j];
+        if (this == &other) {
+            return *this; // Self-assignment check
         }
+
+        // 1. Clean up old memory
+        for (int i = 0; i < N; i++) {
+            delete[] data[i];
+        }
+        delete[] data;
+
+        // 2. Allocate and copy new memory
+        N = other.N;
+        data = new int*[N];
+        for (int i = 0; i < N; i++) {
+            data[i] = new int[N];
+            for (int j = 0; j < N; j++) {
+                data[i][j] = other.data[i][j];
+            }
+        }
+
+        return *this;
     }
 
-    return *this;
-}
-
-};
-int getSize() const { return N; }
+    int getSize() const { return N; }
 
     // Direct access helper
     int get(int r, int c) const { return data[r][c]; }
@@ -144,7 +147,14 @@ int getSize() const { return N; }
     static Matrix updateElement(Matrix m, int r = 0, int c = 0, int val = 100) {
         if (r >= 0 && r < m.N && c >= 0 && c < m.N) {
             m.data[r][c] = val;
-        } else {int main() {
+        } else {
+            std::cout << "Invalid indices for update.\n";
+        }
+        return m;
+    }
+};
+
+int main() {
     std::string filename;
     std::cout << "Enter the input file name: ";
     std::cin >> filename;
@@ -224,8 +234,5 @@ int getSize() const { return N; }
 
     return 0;
 }
-            std::cout << "Invalid indices for update.\n";
-        }
-        return m;
-    }
-};
+
+#endif
